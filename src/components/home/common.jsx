@@ -4,31 +4,62 @@ import {
   AppstoreOutlined,
   BellOutlined,
   SettingOutlined,
-  RightCircleOutlined
+  RightCircleOutlined,
+  RightOutlined
 } from '@ant-design/icons'
 import 'antd/dist/antd.css'
 import './common.less'
 import store from '../../store'
 import unlove from '../../images/icons/unlove.png'
 import love from '../../images/icons/love.png'
+import alarm from '../../images/icons/alarm.png'
+import normal from '../../images/icons/normal.png'
 import Nodata from '../../tool/noData'
 
 export default class common extends Component {
-
   state = {
     visible: false,
     iconArr: [],
-    starIconArr: []
+    starIconArr: [],
+    unreadMessage: [
+      {
+        typeName: "危急值",
+        type: 'danger',
+        time: "2021-10-20 11:35:29.028",
+        message: "危急值通知: xx科,张三患者,男,48岁,就诊号3654760,于2021-10-20 11:15:32做的血常规中存在高级别危急值结果，结果为xxx，请相关临床负责人立即予以接报处理。",
+      },
+      {
+        typeName: "体温异常",
+        type: 'normal',
+        time: "2021-10-20 10:55:22.365",
+        message: "注意: 05床,xx患者,于2021-10-20 10:55时,测量体温38.5℃,体温异常,请注意监测。",
+      },
+      {
+        typeName: "护理提示",
+        type: 'normal',
+        time: "2021-10-20 10:15:29.022",
+        message: "值班护士请注意,05床,xx患者,明日起护理等级调整为二级护理。",
+      },
+      {
+        typeName: "体温异常",
+        type: 'normal',
+        time: "2021-10-20 10:39:29.128",
+        message: "注意: 01床,xx患者,于2021-10-20 10:37时,测量体温37.9℃,体温异常,请注意监测。",
+      },
+      {
+        typeName: "病历质控",
+        type: 'normal',
+        time: "2021-10-20 10:15:29.026",
+        message: "值班护士请注意,08床,xx患者,缺少10点体温测量记录,请及时测量并登记。",
+      }
+    ]
   }
-
   componentDidMount() {
     this.getStarIsTrueApplication()
     this.getDefaultSystemApplication()
   }
-  
   render() {
-    const { visible, iconArr, starIconArr } = this.state
-    console.log(starIconArr)
+    const { visible, iconArr, starIconArr, unreadMessage } = this.state
     return (
       <div className='common'>
         <Row justify="space-between">
@@ -94,6 +125,64 @@ export default class common extends Component {
                 <BellOutlined className='iconStyle'/>
                 <span className='name'>待阅消息</span>
                 <RightCircleOutlined className='iconStyle iconAction' onClick={this.seeMoreMessage}/>
+              </div>
+              <div className="content">
+                {
+                  unreadMessage.map(ele => (
+                    <div
+                      className="messageBopx"
+                      key={ele.time}
+                      style={{
+                        background: ele.type === 'danger'?
+                        'linear-gradient(265deg, rgba(215, 84, 84, 0.04) 0%, rgba(215, 84, 84, 0.04) 100%)':
+                        'linear-gradient(265deg, rgba(77, 147, 159, 0.04) 0%, rgba(77, 147, 159, 0.04) 100%)',
+                        display: 'flex'
+                      }}>
+                        <div
+                          className="left"
+                          style={{
+                            width: '60px',
+                            height: '60px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <img
+                            src={ ele.type === 'danger'? alarm: normal }
+                            alt="icon"
+                          />
+                        </div>
+                        <div className="middle" style={{flex: '1', overflow: 'hidden'}}>
+                          <div style={{marginTop: '10px'}}>
+                            <span
+                              style={{
+                                color: ele.type === 'danger'? 'rgb(223, 45, 45)': 'rgb(27, 154, 178)',
+                                background: ele.type === 'danger'? 'rgba(215, 84, 84, 0.1)': 'rgb(227, 241, 243)',
+                                marginRight: '10px'
+                              }}
+                            >
+                              { ele.typeName }
+                            </span>
+                            <span style={{fontSize: '14px', fontWeight: '700'}}>{ ele.time }</span>
+                          </div>
+                          <div
+                            style={{
+                              whiteSpace: 'nowrap',
+                              textOverflow: 'ellipsis',
+                              width: '100%',
+                              overflow: 'hidden',
+                              color: '#647288'
+                            }}>
+                            { ele.message }
+                          </div>
+                        </div>
+                        <div className="right" style={{width: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer'}}>
+                          <RightOutlined />
+                        </div>
+                    </div>
+                  ))
+                }
               </div>
             </div>
           </Col>
@@ -164,19 +253,16 @@ export default class common extends Component {
       </div>
     )
   }
-
   getDefaultSystemApplication() {
     this.setState({
-      iconArr: store.getState().icons
+      iconArr: store.getState().allSystemApplication.icons
     })
   }
-
   getStarIsTrueApplication() {
     this.setState({
-      starIconArr: store.getState().icons.filter(ele => ele.star)
+      starIconArr: store.getState().allSystemApplication.icons.filter(ele => ele.star)
     })
   }
-
   modalAction(action) {
     if (action === 'cancel') {
       this.getDefaultSystemApplication()
@@ -190,17 +276,18 @@ export default class common extends Component {
       visible: false
     })
   }
-
   openSelectIcon = () => {
     this.setState({
       visible: true
     })
   }
-
   seeMoreMessage = () => {
     this.props.history.push('/table')
+    store.dispatch({
+      type: 'changeMenuKey',
+      data: 'table'
+    })
   }
-
   changeStar(index) {
     this.setState({
       iconArr: this.state.iconArr.map((ele, currentIndex) => {

@@ -9,26 +9,25 @@ import 'antd/dist/antd.css'
 import './App.less'
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { routers } from './router'
+import store from './store'
 
 const { Header, Content, Footer } = Layout
 
 class App extends Component {
-
-  state = {
-    current: 'home',
+  componentDidMount() {
+    // window.addEventListener('beforeunload', () => {
+    //   console.log('我要刷新浏览器了')
+    //   alert('11111')
+    //   localStorage.setItem('zwc', '周五超')
+    // })
+    // if (window.performance && performance.navigation.type === 1)
   }
-
   render() {
-
-    const { current } = this.state
-
     return (
-
       <Layout className="layout">
-
         <Header>
           <div className="logo" />
-          <Menu onClick={this.handleClick} selectedKeys={[current]} mode="horizontal">
+          <Menu onClick={this.handleClick} selectedKeys={[store.getState().menuKey.key]} mode="horizontal">
             <Menu.Item key="home" icon={<HomeOutlined className='iconfontFontSize'/>}>
               首页
             </Menu.Item>
@@ -40,13 +39,11 @@ class App extends Component {
             </Menu.Item>
           </Menu>
         </Header>
-
         <Content>
           <Switch>
             <Suspense fallback={<>loading...</>}>
               {
                 routers.map(router => (
-                  // <Route path={router.path} component={() => router.component} key={router.path}></Route>
                   <Route path={router.path} component={props => <router.component {...props} />} key={router.path}></Route>
                 ))
               }
@@ -54,22 +51,17 @@ class App extends Component {
             </Suspense>
           </Switch>
         </Content>
-
         <Footer style={{ textAlign: 'center' }}>webpack-react ©2022 Created by ZhouWuChao</Footer>
-        
       </Layout>
     )
   }
-
   handleClick = item => {
-    this.setState({current: item.key})
+    store.dispatch({
+      type: 'changeMenuKey',
+      data: item.key
+    })
     this.props.history.push(`/${item.key}`)
   }
 }
 
 export default withRouter(App)
-// export default () => (
-//   <ConfigProvider>
-//     withRouter(App)
-//   </ConfigProvider>
-// )

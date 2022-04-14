@@ -1,4 +1,11 @@
-import { createStore } from "redux"
+import { createStore, combineReducers, applyMiddleware } from "redux"
 import allSystemApplication from "../reducer/allSystemApplication"
+import menuKey from "../reducer/menuKey"
+import thunk from 'redux-thunk'
 
-export default createStore(allSystemApplication)
+const mergeReducers = combineReducers({
+  allSystemApplication,
+  menuKey
+})
+
+export default createStore(mergeReducers, applyMiddleware(thunk))

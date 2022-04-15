@@ -15,16 +15,11 @@ const { Header, Content, Footer } = Layout
 
 class App extends Component {
   componentDidMount() {
-    // window.addEventListener('beforeunload', () => {
-    //   console.log('我要刷新浏览器了')
-    //   alert('11111')
-    //   localStorage.setItem('zwc', '周五超')
-    // })
-    // if (window.performance && performance.navigation.type === 1)
   }
   render() {
     return (
       <Layout className="layout">
+
         <Header>
           <div className="logo" />
           <Menu onClick={this.handleClick} selectedKeys={[store.getState().menuKey.key]} mode="horizontal">
@@ -39,6 +34,7 @@ class App extends Component {
             </Menu.Item>
           </Menu>
         </Header>
+
         <Content>
           <Switch>
             <Suspense fallback={<>loading...</>}>
@@ -51,7 +47,9 @@ class App extends Component {
             </Suspense>
           </Switch>
         </Content>
+
         <Footer style={{ textAlign: 'center' }}>webpack-react ©2022 Created by ZhouWuChao</Footer>
+        
       </Layout>
     )
   }

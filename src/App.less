@@ -1,28 +1,44 @@
 .layout {
   .iconfontFontSize {
-    font-size: 20px;
+    font-size: 20px
   }
   > .ant-layout-header {
+    height: 64px;
     background-color: rgba(52, 132, 147, 1);
+    // background-color: orange;
     padding: 0;
     display: flex;
+    margin-bottom: 20px;
     > .logo {
       background: url('./images/header-bg.png') no-repeat;
       height: 64px;
       width: 394px;
       display: inline-block;
-      background-size: 100% 100%;
+      background-size: 100% 100%
     }
     > .ant-menu {
       display: inline-block;
       background-color: rgba(52, 132, 147, 1);
       color: #fff;
       height: 65px;
-      font-size: 20px;
+      font-size: 20px
     }
   }
   > .ant-layout-content {
     background-color: #f5f7fa;
     padding: 0px 20px;
+    min-height: 820px;
+    height: calc(100vh - 64px -20px - 40px - 20px);
+  }
+  > .ant-layout-footer {
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ccc;
+    width: calc(100vw - 40px);
+    margin-top: 20px;
+    margin-left: 20px;
   }
 }

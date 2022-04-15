@@ -76,40 +76,9 @@ export default class common extends Component {
                     starIconArr.length > 0?
                     starIconArr.map(ele => (
                       <Col key={ele.name} flex="0 0 23%">
-                        <div
-                          className="iconBox"
-                          style={{
-                            width: '100%',
-                            height: '100px',
-                            borderRadius: '10px',
-                            position: 'relative',
-                            overflowY: 'hidden'
-                          }}
-                        >
-                          <img
-                            src={ele.path}
-                            style={{
-                              width: '50px',
-                              height: '50px',
-                              position: 'absolute',
-                              left: '50%',
-                              top: '50%',
-                              transform: 'translate(-50%, -70%)'
-                            }}
-                            alt="icon"
-                          />
-                          <div
-                            style={{
-                              textAlign: 'center',
-                              position: 'absolute',
-                              bottom: '4px',
-                              width: '100%',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                            title={ele.name}
-                          >{ ele.name }</div>
+                        <div className="iconBox">
+                          <img src={ele.path} alt="icon"/>
+                          <div title={ele.name}>{ ele.name }</div>
                         </div>
                       </Col>
                     )):
@@ -129,57 +98,24 @@ export default class common extends Component {
               <div className="content">
                 {
                   unreadMessage.map(ele => (
-                    <div
-                      className="messageBopx"
-                      key={ele.time}
-                      style={{
-                        background: ele.type === 'danger'?
-                        'linear-gradient(265deg, rgba(215, 84, 84, 0.04) 0%, rgba(215, 84, 84, 0.04) 100%)':
-                        'linear-gradient(265deg, rgba(77, 147, 159, 0.04) 0%, rgba(77, 147, 159, 0.04) 100%)',
-                        display: 'flex'
-                      }}>
-                        <div
-                          className="left"
-                          style={{
-                            width: '60px',
-                            height: '60px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                          }}
-                        >
-                          <img
-                            src={ ele.type === 'danger'? alarm: normal }
-                            alt="icon"
-                          />
+                    <div className={ele.type === 'danger'? 'dangerBox': 'normalBox'} key={ele.time}>
+                      <div className="left">
+                        <img src={ ele.type === 'danger'? alarm: normal } alt="icon"/>
+                      </div>
+                      <div className="middle">
+                        <div style={{marginTop: '10px'}}>
+                          <span className={ele.type === 'danger'? 'dangerSpan': 'normalSpan'}>
+                            { ele.typeName }
+                          </span>
+                          <span className='timeSpan'>{ ele.time }</span>
                         </div>
-                        <div className="middle" style={{flex: '1', overflow: 'hidden'}}>
-                          <div style={{marginTop: '10px'}}>
-                            <span
-                              style={{
-                                color: ele.type === 'danger'? 'rgb(223, 45, 45)': 'rgb(27, 154, 178)',
-                                background: ele.type === 'danger'? 'rgba(215, 84, 84, 0.1)': 'rgb(227, 241, 243)',
-                                marginRight: '10px'
-                              }}
-                            >
-                              { ele.typeName }
-                            </span>
-                            <span style={{fontSize: '14px', fontWeight: '700'}}>{ ele.time }</span>
-                          </div>
-                          <div
-                            style={{
-                              whiteSpace: 'nowrap',
-                              textOverflow: 'ellipsis',
-                              width: '100%',
-                              overflow: 'hidden',
-                              color: '#647288'
-                            }}>
-                            { ele.message }
-                          </div>
+                        <div className='notice'>
+                          { ele.message }
                         </div>
-                        <div className="right" style={{width: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer'}}>
-                          <RightOutlined />
-                        </div>
+                      </div>
+                      <div className="right">
+                        <RightOutlined />
+                      </div>
                     </div>
                   ))
                 }
@@ -192,6 +128,7 @@ export default class common extends Component {
                 <SettingOutlined className='iconStyle'/>
                 <span className='name'>通讯录</span>
               </div>
+              <div className="content"></div>
             </div>
           </Col>
         </Row>
@@ -205,7 +142,6 @@ export default class common extends Component {
           onCancel={() => this.modalAction('cancel')}
           width={1000}
         >
-          {/* 设置每个元素左边距和右边距总和为10,行与行间距为10 */}
           <Row gutter={[10, 10]}>
             {
               iconArr.map((ele, index) => (

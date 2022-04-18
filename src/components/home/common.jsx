@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Modal, Pagination } from 'antd'
+import { Row, Col, Modal, Pagination, Radio, Input } from 'antd'
 import {
   AppstoreOutlined,
   BellOutlined,
@@ -15,6 +15,10 @@ import love from '../../images/icons/love.png'
 import alarm from '../../images/icons/alarm.png'
 import normal from '../../images/icons/normal.png'
 import Nodata from '../../tool/noData'
+import startWhite from '../../images/icons/startWhite.png'
+import starYellow from '../../images/icons/starYellow.png'
+
+const { Search } = Input
 
 export default class common extends Component {
   state = {
@@ -65,7 +69,40 @@ export default class common extends Component {
         message: "危急值通知: xx科,张三患者,男,48岁,就诊号3654760,于2022-04-18 11:21:32做的血常规中存在高级别危急值结果,结果为xxx,请相关临床负责人立即予以接报处理。"
       }
     ],
-    currentPage: 1
+    currentPage: 1,
+    radioValue: 1,
+    address: [
+      {
+        name: '任美书',
+        phone: '17758775627',
+        duty: false,
+        collection: false
+      },
+      {
+        name: '张舒美',
+        phone: '17858785628',
+        duty: false,
+        collection: false
+      },
+      {
+        name: '于向西',
+        phone: '17958795629',
+        duty: true,
+        collection: false
+      },
+      {
+        name: '周之花',
+        phone: '18058805630',
+        duty: true,
+        collection: true
+      },
+      {
+        name: '纪岩红',
+        phone: '18158815631',
+        duty: true,
+        collection: true
+      }
+    ]
   }
   componentDidMount() {
     this.getStarIsTrueApplication()
@@ -74,7 +111,23 @@ export default class common extends Component {
   componentDidUpdate() {
   }
   render() {
-    const { visible, iconArr, starIconArr, unreadMessage, currentPage } = this.state
+    console.log('render')
+    const { visible, iconArr, starIconArr, unreadMessage, currentPage, radioValue, address } = this.state
+    let addressValue
+    switch (radioValue) {
+      case 1:
+        addressValue = address.filter(ele => ele.collection)
+        break;
+      // case 3:
+      //   addressValue = address
+      //   break;
+      case 4:
+        addressValue = address.filter(ele => ele.duty)
+        break;
+      default:
+        addressValue = address
+        break;
+    }
     let currentUnreadMessage = unreadMessage.slice((currentPage - 1) * 5, 5 * currentPage)
     return (
       <div className='common'>
@@ -146,13 +199,39 @@ export default class common extends Component {
               </div>
             </div>
           </Col>
-          <Col span={6}>
+          <Col span={7}>
             <div className="phone container">
               <div className="title">
                 <SettingOutlined className='iconStyle'/>
                 <span className='name'>通讯录</span>
               </div>
-              <div className="content"></div>
+              <div className="content">
+                <span>选择分组：</span>
+                <Radio.Group onChange={this.changeRadio} value={radioValue} compact={true}>
+                  <Radio value={1} style={{color: radioValue === 1? 'rgba(52, 132, 147, 1)': '#000'}}>收藏</Radio>
+                  {/* <Radio value={2} style={{color: radioValue === 2? 'rgba(52, 132, 147, 1)': '#000'}}>科室</Radio> */}
+                  <Radio value={3} style={{color: radioValue === 3? 'rgba(52, 132, 147, 1)': '#000'}}>全院</Radio>
+                  <Radio value={4} style={{color: radioValue === 4? 'rgba(52, 132, 147, 1)': '#000'}}>值班</Radio>
+                </Radio.Group>
+                <Search
+                  placeholder="输入联系方式模糊搜索"
+                  allowClear
+                  enterButton="搜索"
+                  size="middle"
+                  onSearch={this.onSearch}
+                />
+                <ul>
+                  {
+                    addressValue.map(ele => (
+                      <li key={ele.phone}>
+                        <span>{ele.name}</span>
+                        <span>{ele.phone}</span>
+                        <img src={ele.collection? starYellow: startWhite} alt="icon" onClick={() => this.changeCollection(ele.phone)}/>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
             </div>
           </Col>
         </Row>
@@ -260,4 +339,12 @@ export default class common extends Component {
   changeCurrentPage = page => {
     this.setState({currentPage: page})
   }
+  changeRadio = e => this.setState({radioValue: e.target.value})
+  onSearch = v => console.log(v)
+  changeCollection(phone) {
+    this.setState({
+      address: this.state.address.map(ele => ele.phone === phone? { ...ele, collection: !ele.collection }: ele)
+    })
+  }
 }
+ 

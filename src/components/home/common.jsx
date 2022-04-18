@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Modal } from 'antd'
+import { Row, Col, Modal, Pagination } from 'antd'
 import {
   AppstoreOutlined,
   BellOutlined,
@@ -26,40 +26,56 @@ export default class common extends Component {
         typeName: "危急值",
         type: 'danger',
         time: "2021-10-20 11:35:29.028",
-        message: "危急值通知: xx科,张三患者,男,48岁,就诊号3654760,于2021-10-20 11:15:32做的血常规中存在高级别危急值结果，结果为xxx，请相关临床负责人立即予以接报处理。",
+        message: "危急值通知: xx科,张三患者,男,48岁,就诊号3654760,于2021-10-20 11:15:32做的血常规中存在高级别危急值结果,结果为xxx,请相关临床负责人立即予以接报处理。"
       },
       {
         typeName: "体温异常",
         type: 'normal',
         time: "2021-10-20 10:55:22.365",
-        message: "注意: 05床,xx患者,于2021-10-20 10:55时,测量体温38.5℃,体温异常,请注意监测。",
+        message: "注意: 05床,xx患者,于2021-10-20 10:55时,测量体温38.5℃,体温异常,请注意监测。"
       },
       {
         typeName: "护理提示",
         type: 'normal',
         time: "2021-10-20 10:15:29.022",
-        message: "值班护士请注意,05床,xx患者,明日起护理等级调整为二级护理。",
+        message: "值班护士请注意,05床,xx患者,明日起护理等级调整为二级护理。"
       },
       {
         typeName: "体温异常",
         type: 'normal',
         time: "2021-10-20 10:39:29.128",
-        message: "注意: 01床,xx患者,于2021-10-20 10:37时,测量体温37.9℃,体温异常,请注意监测。",
+        message: "注意: 01床,xx患者,于2021-10-20 10:37时,测量体温37.9℃,体温异常,请注意监测。"
       },
       {
         typeName: "病历质控",
         type: 'normal',
         time: "2021-10-20 10:15:29.026",
-        message: "值班护士请注意,08床,xx患者,缺少10点体温测量记录,请及时测量并登记。",
+        message: "值班护士请注意,08床,xx患者,缺少10点体温测量记录,请及时测量并登记。"
+      },
+      {
+        typeName: "体温异常",
+        type: 'normal',
+        time: "2022-10-20 10:56:22.365",
+        message: "注意: 07床,xx患者,于2022-10-20 10:56时,测量体温39℃,体温异常,请注意监测。"
+      },
+      {
+        typeName: "危急值",
+        type: 'danger',
+        time: "2022-04-18 11:35:29.028",
+        message: "危急值通知: xx科,张三患者,男,48岁,就诊号3654760,于2022-04-18 11:21:32做的血常规中存在高级别危急值结果,结果为xxx,请相关临床负责人立即予以接报处理。"
       }
-    ]
+    ],
+    currentPage: 1
   }
   componentDidMount() {
     this.getStarIsTrueApplication()
     this.getDefaultSystemApplication()
   }
+  componentDidUpdate() {
+  }
   render() {
-    const { visible, iconArr, starIconArr, unreadMessage } = this.state
+    const { visible, iconArr, starIconArr, unreadMessage, currentPage } = this.state
+    let currentUnreadMessage = unreadMessage.slice((currentPage - 1) * 5, 5 * currentPage)
     return (
       <div className='common'>
         <Row justify="space-between">
@@ -97,7 +113,7 @@ export default class common extends Component {
               </div>
               <div className="content">
                 {
-                  unreadMessage.map(ele => (
+                  currentUnreadMessage.map(ele => (
                     <div className={ele.type === 'danger'? 'dangerBox': 'normalBox'} key={ele.time}>
                       <div className="left">
                         <img src={ ele.type === 'danger'? alarm: normal } alt="icon"/>
@@ -119,6 +135,14 @@ export default class common extends Component {
                     </div>
                   ))
                 }
+                <Pagination
+                  defaultCurrent={1}
+                  total={unreadMessage.length}
+                  hideOnSinglePage={true}
+                  pageSize={5}
+                  pageSizeOptions={5}
+                  onChange={this.changeCurrentPage}
+                />
               </div>
             </div>
           </Col>
@@ -213,9 +237,11 @@ export default class common extends Component {
     })
   }
   openSelectIcon = () => {
-    this.setState({
-      visible: true
-    })
+    setTimeout(() => {
+      this.setState({
+        visible: true
+      })
+    }, 0)
   }
   seeMoreMessage = () => {
     this.props.history.push('/table')
@@ -230,5 +256,8 @@ export default class common extends Component {
         return currentIndex === index? { ...ele, star: !ele.star }: ele
       })
     })
+  }
+  changeCurrentPage = page => {
+    this.setState({currentPage: page})
   }
 }

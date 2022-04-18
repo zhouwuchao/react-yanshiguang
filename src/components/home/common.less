@@ -76,6 +76,7 @@
       }
       > .unredMessage {
         > .content {
+          position: relative;
           > .dangerBox {
             display: flex;
             background: linear-gradient(265deg, rgba(215, 84, 84, 0.04) 0%, rgba(215, 84, 84, 0.04) 100%);
@@ -83,6 +84,11 @@
           > .normalBox {
             display: flex;
             background: linear-gradient(265deg, rgba(77, 147, 159, 0.04) 0%, rgba(77, 147, 159, 0.04) 100%)
+          }
+          > .ant-pagination {
+            position: absolute;
+            top: 308px;
+            right: 8px
           }
           .left {
             width: 60px;

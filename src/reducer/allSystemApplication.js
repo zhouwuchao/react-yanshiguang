@@ -1,7 +1,11 @@
+import pic01 from '../images/icons/01.png'
+// const pic01 = () => import('../images/icons/01.png')
+
 let icons =  [
   {
     name: '住院医生站',
-    path: require('../images/icons/01.png'),
+    // path: require('../images/icons/01.png'),
+    path: pic01,
     star: true
   },
   {

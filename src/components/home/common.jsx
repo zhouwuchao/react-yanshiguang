@@ -20,6 +20,8 @@ import starYellow from '../../images/icons/starYellow.png'
 
 const { Search } = Input
 
+let addressValue
+
 export default class common extends Component {
   state = {
     visible: false,
@@ -102,32 +104,43 @@ export default class common extends Component {
         duty: true,
         collection: true
       }
-    ]
+    ],
+    addressValue: [],
+    currentAddressValue: []
   }
   componentDidMount() {
     this.getStarIsTrueApplication()
     this.getDefaultSystemApplication()
+    this.getAddressValue(this.state.radioValue)
   }
   componentDidUpdate() {
   }
   render() {
     console.log('render')
     const { visible, iconArr, starIconArr, unreadMessage, currentPage, radioValue, address } = this.state
-    let addressValue
-    switch (radioValue) {
-      case 1:
-        addressValue = address.filter(ele => ele.collection)
-        break;
-      // case 3:
-      //   addressValue = address
-      //   break;
-      case 4:
-        addressValue = address.filter(ele => ele.duty)
-        break;
-      default:
-        addressValue = address
-        break;
-    }
+    // let addressValue
+    // switch (radioValue) {
+    //   case 1:
+    //     addressValue = address.filter(ele => ele.collection)
+    //     // this.setState({addressValue: address.filter(ele => ele.collection)})
+    //     break;
+    //   // case 3:
+    //   //   addressValue = address
+    //   //   break;
+    //   case 4:
+    //     addressValue = address.filter(ele => ele.duty)
+    //     // this.setState({addressValue: address.filter(ele => ele.duty)})
+    //     break;
+    //   default:
+    //     addressValue = address
+    //     // this.setState({addressValue: address})
+    //     break;
+    // }
+    // sessionStorage.setItem('addressValue', JSON.stringify(addressValue))
+    // store.dispatch({
+    //   type: 'changeAddressValue',
+    //   data: addressValue
+    // })
     let currentUnreadMessage = unreadMessage.slice((currentPage - 1) * 5, 5 * currentPage)
     return (
       <div className='common'>
@@ -222,13 +235,15 @@ export default class common extends Component {
                 />
                 <ul>
                   {
-                    addressValue.map(ele => (
+                    this.state.addressValue.length > 0?
+                    this.state.addressValue.map(ele => (
                       <li key={ele.phone}>
                         <span>{ele.name}</span>
                         <span>{ele.phone}</span>
                         <img src={ele.collection? starYellow: startWhite} alt="icon" onClick={() => this.changeCollection(ele.phone)}/>
                       </li>
-                    ))
+                    )):
+                    <Nodata></Nodata>
                   }
                 </ul>
               </div>
@@ -302,6 +317,36 @@ export default class common extends Component {
       starIconArr: store.getState().allSystemApplication.icons.filter(ele => ele.star)
     })
   }
+  getAddressValue(radioValue) {
+    switch (radioValue) {
+      case 1:
+        // addressValue = address.filter(ele => ele.collection)
+        this.setState(
+          state => ({addressValue: state.address.filter(ele => ele.collection)}),
+          () => sessionStorage.setItem('addressValue', JSON.stringify(this.state.addressValue))
+        )
+        break;
+      // case 3:
+      //   addressValue = address
+      //   break;
+      case 4:
+        // addressValue = address.filter(ele => ele.duty)
+        this.setState(
+          state => ({addressValue: state.address.filter(ele => ele.duty)}),
+          () => sessionStorage.setItem('addressValue', JSON.stringify(this.state.addressValue))
+        )
+        break;
+      default:
+        // addressValue = address
+        this.setState(
+          state => ({addressValue: state.address}),
+          () => sessionStorage.setItem('addressValue', JSON.stringify(this.state.addressValue))
+        )
+        break;
+    }
+    // console.log(this.state.addressValue)
+    // sessionStorage.setItem('addressValue', JSON.stringify(this.state.addressValue))
+  }
   modalAction(action) {
     if (action === 'cancel') {
       this.getDefaultSystemApplication()
@@ -339,12 +384,43 @@ export default class common extends Component {
   changeCurrentPage = page => {
     this.setState({currentPage: page})
   }
-  changeRadio = e => this.setState({radioValue: e.target.value})
-  onSearch = v => console.log(v)
+  changeRadio = e => {
+    this.setState(() => ({radioValue: e.target.value}), () => this.getAddressValue(this.state.radioValue))
+    // this.getAddressValue(radioValue)
+  }
+  onSearch = value => {
+    // sessionStorage.setItem('addressValue', JSON.stringify(this.state.addressValue))
+    if (value) {
+      
+      // console.log(value)
+      // console.log(JSON.parse(sessionStorage.getItem('addressValue')))
+      let addressValue = JSON.parse(sessionStorage.getItem('addressValue'))
+      console.log(addressValue)
+      let newAdd = addressValue.filter(ele => {
+        if (ele.name.includes(value) || ele.phone.includes(value)) {
+          return true
+        }
+      })
+      this.setState({
+        addressValue: newAdd
+      })
+      // console.log(newAdd)
+      // addressValue = newAdd
+      // this.forceUpdate()
+      // this.setState({
+      //   addressValue({})
+      // })
+    } else {
+      // this.setState({
+      //   addressValue: JSON.parse(sessionStorage.getItem('addressValue'))
+      // })
+    }
+  }
   changeCollection(phone) {
-    this.setState({
-      address: this.state.address.map(ele => ele.phone === phone? { ...ele, collection: !ele.collection }: ele)
-    })
+    console.log(phone)
+    this.setState(state => ({
+      address: state.address.map(ele => ele.phone === phone? { ...ele, collection: !ele.collection }: ele)
+    }), () => this.getAddressValue(this.state.radioValue))
   }
 }
  

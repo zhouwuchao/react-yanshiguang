@@ -144,7 +144,7 @@ export default class common extends Component {
     let currentUnreadMessage = unreadMessage.slice((currentPage - 1) * 5, 5 * currentPage)
     return (
       <div className='common'>
-        <Row justify="space-between">
+        <Row justify="space-around">
           <Col span={6}>
             <div className="application container">
               <div className="title">
